@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-const kv = Redis.fromEnv();
+import redis from "@/lib/redis";
+
 export async function POST(req: NextRequest) {
     const body = await req.json();
     const { messageIdentifier } = body;
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid messageIdentifier" }, { status: 400 });
     }
 
-    await kv.set(`device:${messageIdentifier}`, { 
+    await redis.set(`device:${messageIdentifier}`, { 
         messageIdentifier,
         registeredAt: new Date().toISOString()
     }, { ex: 86400 * 30 }); // 30 days
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
     // Return all registered devices (for the UI to pick from)
-    const keys = await kv.keys("device:*");
-    const devices = await Promise.all(keys.map(k => kv.get(k)));
+    const keys = await redis.keys("device:*");
+    const devices = await Promise.all(keys.map(k => redis.get(k)));
     return NextResponse.json(devices);
 }

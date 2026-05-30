@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-const kv = Redis.fromEnv();
+import redis from "@/lib/redis";
 import { Ticket } from "@/types/liseberg";
 
 export async function POST(req: NextRequest) {
@@ -13,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     const parsed: Ticket = typeof ticket === "string" ? JSON.parse(ticket) : ticket;
 
-    await kv.set(`ticket:${parsed.messageIdentifier}`, parsed, { ex: 3600 });
+    await redis.set(`ticket:${parsed.messageIdentifier}`, parsed, { ex: 3600 });
 
     return NextResponse.json({ ok: true });
 }

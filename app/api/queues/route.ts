@@ -3,7 +3,7 @@ import { Queue } from "@/types/liseberg";
 
 export async function GET() {
     const res = await fetch("https://virtualqueue.liseberg.se/Queue", {
-        next: { revalidate: 30 }
+        next: { revalidate: 10 }
     });
 
     if (!res.ok) {

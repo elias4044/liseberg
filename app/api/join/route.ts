@@ -24,5 +24,9 @@ export async function POST(req: NextRequest) {
         })
     });
 
-    return NextResponse.json({ ok: res.ok }, { status: res.status });
+    if (!res.ok) {
+        return NextResponse.json({ error: "Failed to join queue" }, { status: res.status });
+    }
+
+    return NextResponse.json({ ok: true });
 }

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-const kv = Redis.fromEnv();
-import { Ticket } from "@/types/liseberg";
+import redis from "@/lib/redis";import { Ticket } from "@/types/liseberg";
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -11,7 +9,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Missing messageIdentifier" }, { status: 400 });
     }
 
-    const ticket = await kv.get<Ticket>(`ticket:${messageIdentifier}`);
+    const ticket = await redis.get<Ticket>(`ticket:${messageIdentifier}`);
 
     if (!ticket) {
         return NextResponse.json({ status: "waiting" });
