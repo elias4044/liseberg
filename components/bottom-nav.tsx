@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { Home, List, Ticket, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+
+
 export function BottomNav() {
   const pathname = usePathname();
 
@@ -14,6 +16,12 @@ export function BottomNav() {
     { href: "/current", icon: Ticket, label: "Current" },
     { href: "/settings", icon: Settings, label: "Settings" },
   ];
+
+
+  const disableBottomNavOnPages = ["/current/view"];
+  if (disableBottomNavOnPages.includes(pathname)) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pt-4 px-6 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useGlobalState } from "@/components/global-state";
-import { QrCode, LogOut, Clock, RefreshCw } from "lucide-react";
+import { QrCode, LogOut, Clock, RefreshCw, Eye } from "lucide-react";
 import { formatWait, waitMinutes, shortId } from "@/lib/utils";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function CurrentPage() {
   const { tickets, leaveQueue, refreshData } = useGlobalState();
@@ -18,7 +19,7 @@ export default function CurrentPage() {
   };
 
   return (
-    <div className="pt-12 animate-fade-in flex flex-col gap-6">
+    <div className="pt-12 animate-fade-in flex flex-col gap-6 scale-[0.8]">
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight mb-1">Current Queues</h1>
@@ -39,7 +40,7 @@ export default function CurrentPage() {
           {activeEntries.map(([mid, t]) => {
             const waitMins = waitMinutes(t.actualTime);
             return (
-              <div key={t.ticketCode} className="bg-gradient-to-b from-zinc-900/80 to-black/60 border border-zinc-800 rounded-[2rem] p-6 backdrop-blur-xl flex flex-col gap-6 shadow-2xl relative overflow-hidden">
+              <div key={t.ticketCode} className="bg-linear-to-b from-zinc-900/80 to-black/60 border border-zinc-800 rounded-[2rem] p-6 backdrop-blur-xl flex flex-col gap-6 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4">
                   <div className="px-2 py-1 rounded-md bg-black/40 border border-zinc-800 text-[10px] font-mono text-zinc-500">
                     ID: {shortId(mid)}
@@ -76,7 +77,13 @@ export default function CurrentPage() {
                   </div>
                 </div>
 
-                <button 
+                <Link
+                  href = {`/current/view?mid=${mid}`}
+                  className="w-full py-4 rounded-2xl bg-green-300/10 hover:bg-green-300/20 text-green-400 font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 border border-green-300/20"
+                > <Eye size={16} /> View Ticket
+                </Link>
+
+                <button
                   onClick={() => handleLeave(mid, t.ticketCode)}
                   disabled={leaving === t.ticketCode}
                   className="w-full py-4 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold text-sm transition-all active:scale-95 flex items-center justify-center gap-2 border border-red-500/20"

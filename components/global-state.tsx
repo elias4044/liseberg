@@ -30,7 +30,7 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
   const [partySize, setPartySize] = useState<number>(1);
   const sniperRunning = useRef(false);
 
-  // Load state
+  // Load state from local storage & API
   useEffect(() => {
     const savedMids = localStorage.getItem("liseberg_mids");
     const savedSnipers = localStorage.getItem("liseberg_snipers");
@@ -62,6 +62,7 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchTickets = useCallback(async () => {
+    if (mids.length === 0) return;
     const newTickets: Record<string, Ticket | null> = {};
     for (const mid of mids) {
       try {
@@ -83,6 +84,22 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
     }
     setTickets(newTickets);
   }, [mids]);
+
+  // --- FIX: Add missing triggers for initial load --- //
+  
+  // 1. Fetch queues immediately on mount
+  useEffect(() => {
+    fetchQueues();
+  }, [fetchQueues]);
+
+  // 2. Fetch tickets whenever the keys (mids) update/load
+  useEffect(() => {
+    if (mids.length > 0) {
+      fetchTickets();
+    }
+  }, [mids, fetchTickets]);
+
+  // ------------------------------------------------ //
 
   const refreshData = useCallback(async () => {
     await fetchQueues();

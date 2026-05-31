@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { BottomNav } from "@/components/bottom-nav";
@@ -5,8 +6,8 @@ import { Inter } from "next/font/google";
 import { GlobalProvider } from "@/components/global-state";
 
 export const metadata: Metadata = {
-  title: "Liseberg VQ Pro",
-  description: "Advanced virtual queue manager",
+  title: "Liseberg",
+  description: "Advanced virtual queue manager for Liseberg",
 };
 
 export const viewport: Viewport = {
