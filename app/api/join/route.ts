@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { JoinRequest } from "@/types/liseberg";
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest) {
     const body: JoinRequest = await req.json();
     const { queueKey, partySize, messageIdentifier } = body;
 
