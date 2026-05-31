@@ -12,7 +12,22 @@ export async function POST(req: NextRequest) {
 
     const parsed: Ticket = typeof ticket === "string" ? JSON.parse(ticket) : ticket;
 
-    await redis.set(`ticket:${parsed.messageIdentifier}`, parsed, { ex: 3600 });
+    try {
+        const res = await fetch(`https://virtualqueue.liseberg.se/Ticket?ticketCode=${encodeURIComponent(parsed.ticketCode)}`, {
+            method: "PUT",
+            next: { revalidate: 0 },
+        });
+
+        if (!res.ok) {
+            return NextResponse.json({ error: "Failed to update ticket" }, { status: res.status });
+        }
+
+
+
+        await redis.set(`ticket:${parsed.messageIdentifier}`, parsed, { ex: 3600 });
+    } catch (e) {
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
 }

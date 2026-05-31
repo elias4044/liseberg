@@ -48,3 +48,20 @@ export async function GET() {
         return NextResponse.json({ keys: [] }); // Fallback on error
     }
 }
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { keys } = body;
+
+        if (!keys || !Array.isArray(keys)) {
+            return NextResponse.json({ error: "Invalid payload. Provide an array of 'keys'" }, { status: 400 });
+        }
+
+        for (const key of keys) {
+            await redis.del(`device:${key}`);
+        }
+    } catch (e) {
+        return NextResponse.json({ error: "Server error" }, { status: 500 });
+    }
+}
