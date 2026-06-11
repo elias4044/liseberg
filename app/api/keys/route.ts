@@ -23,6 +23,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid payload. Provide an array of 'keys'" }, { status: 400 });
         }
 
+        // Remove all existing device keys first
+        const existing = await redis.keys("device:*");
+        if (existing && existing.length > 0) {
+            await Promise.all(existing.map(k => redis.del(k)));
+        }
+
         // Store each key in Redis as a device representation
         for (const key of keys) {
             await redis.set(`device:${key}`, {
@@ -46,22 +52,5 @@ export async function GET() {
         return NextResponse.json({ keys: keysList });
     } catch (e) {
         return NextResponse.json({ keys: [] }); // Fallback on error
-    }
-}
-
-export async function DELETE(req: NextRequest) {
-    try {
-        const body = await req.json();
-        const { keys } = body;
-
-        if (!keys || !Array.isArray(keys)) {
-            return NextResponse.json({ error: "Invalid payload. Provide an array of 'keys'" }, { status: 400 });
-        }
-
-        for (const key of keys) {
-            await redis.del(`device:${key}`);
-        }
-    } catch (e) {
-        return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }
